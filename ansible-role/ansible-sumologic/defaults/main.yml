@@ -1,0 +1,8 @@
+---
+# Defaults file for sumologic_agent
+env_timezone: 'Etc/UTC'
+sumologic_tracked_logs: []
+sumologic_ephemeral_agent: true
+sumologic_collector_name: code-test
+sumologic_access_id: 'AKIAIIE33GEAVOB2VBLQ'
+sumologic_access_key: '6WqyxgNHTh+noG2vXQuUF6PXa9tmqWLeBuja1LWi'

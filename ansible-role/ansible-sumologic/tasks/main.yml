@@ -1,0 +1,38 @@
+---
+
+- name: Is Sumologic Agent installed?
+  shell: dpkg-query -l sumocollector
+  register: check_deb
+  failed_when: check_deb.rc > 1
+  when: ansible_os_family == "Debian"
+
+
+- name: Install Sumologic Agent
+  include: pkg-debian.yml
+  when: ansible_os_family == "Debian"
+
+- name: Put config file in place
+  template:
+    src: 'templates/user.properties.j2'
+    dest: '/opt/SumoCollector/config/user.properties'
+    owner: root
+    group: sumologic_collector
+
+- name: Put sources file in place
+  template:
+    src: 'templates/sources-debian.json.j2'
+    dest: '/opt/SumoCollector/config/sources.json'
+    owner: root
+    group: sumologic_collector
+  when: ansible_os_family == "Debian"
+
+- name: Start service
+  service:
+    name: collector
+    state: started
+    enabled: yes
+
+- name: Configure Sumologic Agent
+  include: configure.yml
+  tags:
+  - configure
