@@ -1,0 +1,7 @@
+---
+- name: Install LAMP server in ubuntu-webserver
+  hosts: lamp
+  become: yes
+  become_method: sudo
+  roles:
+    - role
