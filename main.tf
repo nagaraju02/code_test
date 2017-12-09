@@ -131,7 +131,7 @@ resource "aws_instance" "webserver" {
 	  connection {
 		type     = "ssh"
 		user     = "ubuntu"
-		private_key = "${file("../codetest.pem")}"
+		private_key = "${file("codetest.pem")}"
 	  }
 	}
 	
@@ -139,7 +139,7 @@ resource "aws_instance" "webserver" {
 		connection {
 			type     = "ssh"
 			user     = "ubuntu"
-			private_key = "${file("../codetest.pem")}"
+			private_key = "${file("codetest.pem")}"
 		  }
 		inline = [
 		"pwd",
