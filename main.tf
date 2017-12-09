@@ -71,7 +71,7 @@ resource "aws_subnet" "PublicAZB" {
   tags {
         Name = "PublicAZA"
   }
- availability_zone = "${data.aws_availability_zones.available.names[0]}"
+ availability_zone = "${data.aws_availability_zones.available.names[1]}"
 }
 resource "aws_route_table_association" "PublicAZB" {
     subnet_id = "${aws_subnet.PublicAZB.id}"
@@ -104,6 +104,12 @@ resource "aws_security_group" "webserversg" {
     protocol = "-1"
     cidr_blocks = ["10.0.0.0/16"]
   }
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }
 
 resource "aws_instance" "webserver" {
@@ -118,26 +124,32 @@ resource "aws_instance" "webserver" {
     associate_public_ip_address = true
     key_name = "codetest"
 
-    
-	provisioner "local-exec" {
-		command = " echo -e \"[webserver]\n${aws_instance.webserver.public_ip} ansible_connection=ssh ansible_ssh_user=ubuntu\" > inventory && ansible-playbook -i inventory master.yml"
+    provisioner "file" {
+	  source      = "master.yml"
+	  destination = "/tmp/master.yml"
+
+	  connection {
+		type     = "ssh"
+		user     = "ubuntu"
+		private_key = "${file("../codetest.pem")}"
+	  }
 	}
 	
-	
-
-		provisioner "remote-exec" {
-    
+	provisioner "remote-exec" {
 		connection {
 			type     = "ssh"
 			user     = "ubuntu"
 			private_key = "${file("../codetest.pem")}"
 		  }
-		
-	inline = [
+		inline = [
 		"pwd",
-		"sudo apt-get update",
-		"sudo apt-get install ansible"
-	]
-	}
+		"sudo apt-get update -y",
+		"sudo apt-get install ansible -y",
+		"sudo ansible-playbook -i localhost /tmp/master.yml"
+		]
+		}
 	
+	#provisioner "local-exec" {
+#		command = " echo -e \"[webserver]\n${aws_instance.webserver.public_ip} ansible_connection=ssh ansible_ssh_user=ubuntu\" > inventory && ansible-playbook -i inventory master.yml"
+#	}
 }
