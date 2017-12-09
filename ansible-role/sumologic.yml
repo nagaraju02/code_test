@@ -1,0 +1,6 @@
+---
+- hosts: lamp
+  become: yes
+  become_method: sudo
+  roles:
+    - role: /root/git/code_test/ansible-role/sumo/ansible-sumologic
