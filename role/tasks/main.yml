@@ -1,0 +1,12 @@
+---
+- name: install apache2 in ubuntu
+  apt: name={{ item }} state=present update_cache=yes
+  with_items:
+        - apache2
+        - mysql-server
+        - php-mysql
+        - php
+        - libapache2-mod-php
+        - php-mcrypt
+- name: Restart the apache2
+  service: name={{ service }} state=restarted
